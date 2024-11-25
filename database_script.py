@@ -6,18 +6,7 @@ db_path = r"C:\Users\A.I\Documents\Tatweer\Project 2\Database\reports.db"
 
 # Directory structure
 base_dir = r"C:\Users\A.I\Documents\Tatweer\Project 2\Reports"
-folders= [
-    "إحصاءات التجارة الخارجية",
-    "إحصائيات الناتج المحلي الإجمالي",
-    "إحصائيات نقدية ومصرفية",
-    "إستخدامات المصارف للنقد الأجنبي",
-    "الدفع الإلكتروني",
-    "الرقم القياسي لنفقة المعيشة",
-    "النشرة الإقتصادية",
-    "أوراق التعاون الدولي",
-    "تقارير سنوية",
-    "ميزان المدفوعات"
-]
+folders = ["احصائيات نقدية ومصرفية", "النشرة القتصادية", "تقارير سنوية"]
 
 # Create the database and table
 conn = sqlite3.connect(db_path)

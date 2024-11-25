@@ -6,34 +6,35 @@ import pandas as pd
 # Database connection
 DB_PATH = r"C:\Users\A.I\Documents\Tatweer\Project 2\Database\reports.db"
 
-# Load data from the database
-def load_data():
+
+def load_data():  # Ensure this function is correctly defined in your file
     conn = sqlite3.connect(DB_PATH)
-    query = "SELECT id, report_type, year, name FROM reports"
-    df = pd.read_sql_query(query, conn)
-    conn.close()
-    return df
+    try:
+        query = "SELECT id, report_type, year, name FROM reports"
+        df = pd.read_sql_query(query, conn)
+        return df
+    except pd.io.sql.DatabaseError as e:
+        st.error(f"Database error: {e}")  # Handle potential database errors
+        return pd.DataFrame()  # Return empty DataFrame on error
+    finally:
+        conn.close()
 
 def load_file(file_id):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-
-    # Fetch all rows and filter in Python
-    cursor.execute("SELECT id, name, file FROM reports")
-    all_rows = cursor.fetchall()
-
-    # Debugging: Print all rows
-    # print(f"All Rows: {all_rows}")
-
-    conn.close()
-
-    # Find the row matching the file_id
-    for row in all_rows:
-        if row[0] == file_id:  # Match id
-            file_name, file_content = row[1], row[2]
-            return file_name, file_content
-
-    return None, None
+    try:
+        cursor.execute("SELECT id, name, file FROM reports")
+        rows = cursor.fetchall()
+        for row in rows:
+            if row[0] == file_id:  # Match id
+                file_name, file_content = row[1], row[2]
+                return file_name, file_content
+        return None, None
+    except sqlite3.Error as e:  # Handle SQLite errors
+        st.error(f"Database error: {e}")
+        # return None, None
+    finally:
+        conn.close()
 
 
 # Summarize text using the local LLM server
@@ -51,13 +52,13 @@ def summarize_text(text):
         }
         headers = {"Content-Type": "application/json"}
         response = requests.post(url, json=payload, headers=headers)
-        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+        response.raise_for_status()
         return response.json()["choices"][0]["message"]["content"]
-    except requests.exceptions.RequestException as e:  # Catch request-related errors
+    except requests.exceptions.RequestException as e:
         return f"Error communicating with LLM server: {e}"
-    except (KeyError, IndexError) as e:  # Catch errors in response parsing
+    except (KeyError, IndexError) as e:
         return f"Error parsing LLM response: {e}"
-    except Exception as e:  # Catch any other exceptions
+    except Exception as e:
         return f"An unexpected error occurred: {e}"
 
 # Streamlit UI Configuration
@@ -76,18 +77,18 @@ st.markdown(
             font-family: 'Tajawal', sans-serif;
             direction: rtl;
             text-align: right;
-            background-color: #f8f9fa; /* Light background */
-            color: #343a40; /* Dark text for contrast */
+            background-color: #f8f9fa;
+            color: #343a40;
         }
         .stApp {
             background-color: #f8f9fa;
         }
         h1, h2, h3, h4, h5, h6 {
-            color: #2e5984; /* Primary color for headers */
+            color: #2e5984;
             font-weight: 700;
         }
         .stButton button {
-            background-color: #2e5984; /* Primary color for buttons */
+            background-color: #2e5984;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -99,7 +100,7 @@ st.markdown(
             margin: 5px 0;
         }
         .stButton button:hover {
-            background-color: #234b6e; /* Darker shade on hover */
+            background-color: #234b6e;
             transform: translateY(-2px);
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
         }
@@ -129,9 +130,9 @@ st.markdown(
             padding: 18px;
             border-radius: 12px;
             margin-top: 15px;
-            background-color: #f0f4f8; /* Light blue background for summary */
+            background-color: #f0f4f8;
         }
-        .st-emotion-cache-zq5a9r { /* Adjust padding for main area */
+        .st-emotion-cache-zq5a9r {
             padding: 2rem;
         }
         hr {
@@ -151,13 +152,13 @@ st.markdown("---")
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    selected_year = st.selectbox("اختر السنة", options=sorted(set(data["year"]), reverse=True))
+    selected_type = st.selectbox("اختر نوع التقرير", options=sorted(set(data["report_type"])))
 with col2:
-    filtered_data_year = data[data["year"] == selected_year]
-    selected_type = st.selectbox("اختر نوع التقرير", options=sorted(set(filtered_data_year["report_type"])))
+    filtered_data_type = data[data["report_type"] == selected_type]
+    selected_year = st.selectbox("اختر السنة", options=sorted(set(filtered_data_type["year"]), reverse=True))
 with col3:
-    final_filtered_data = filtered_data_year[filtered_data_year["report_type"] == selected_type]
-    selected_file = st.selectbox("اختر الملف", options=final_filtered_data["name"].tolist())
+    final_filtered_data = filtered_data_type[filtered_data_type["year"] == selected_year]
+    selected_file = st.selectbox("اختر الملف", options=final_filtered_data["name"].tolist() if not final_filtered_data.empty else ['لا يوجد ملفات'])
 
 # File Action Buttons
 col4, col5 = st.columns(2)
@@ -167,24 +168,23 @@ with col5:
     summarize_button_clicked = st.button("تلخيص النص")
 
 # Main Content Area
-if selected_file:
+if selected_file and selected_file != 'لا يوجد ملفات':
     file_id = final_filtered_data[final_filtered_data["name"] == selected_file]["id"].values[0]
     file_name, file_content = load_file(file_id)
-
     if file_content:
         if file_name.lower().endswith((".txt", ".md", ".csv")):
             text_content = file_content.decode("utf-8")
 
+            # Display Text Content
             if display_button_clicked:
-                st.session_state.extracted_text = text_content
                 st.subheader("النص الكامل")
                 st.markdown(f"<div class='report-container'><p>{text_content}</p></div>", unsafe_allow_html=True)
-
+            
+             # Summarize Text Content
             if summarize_button_clicked:
-                if 'extracted_text' in st.session_state:
-                    with st.spinner('انتظر قليلا يتم التلخيص...'):
-                         summary = summarize_text(st.session_state.extracted_text)
-                    st.subheader("الملخص")
-                    st.markdown(f"<div class='report-container summary-box'><p>{summary}</p></div>", unsafe_allow_html=True)
-                else:
-                    st.warning
+                summary = summarize_text(text_content)  # Summarize directly from text_content
+                st.subheader("الملخص")
+                st.markdown(f"<div class='report-container summary-box'><p>{summary}</p></div>", unsafe_allow_html=True)
+                
+elif selected_file == 'لا يوجد ملفات':
+     st.warning("لا يوجد ملفات لهذا النوع والسنة")
