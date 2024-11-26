@@ -2,10 +2,14 @@ import streamlit as st
 import requests
 import sqlite3
 import pandas as pd
+import google.generativeai as genai
+
+# Gemini API Configuration
+genai.configure(api_key="AIzaSyBvobnSepdXIp-Qmns2MjWXbO4BGLzpPlc")  # Replace with your actual key
+gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 # Database connection
 DB_PATH = r"C:\Users\A.I\Documents\Tatweer\Project 2\Database\reports.db"
-
 
 def load_data():  # Ensure this function is correctly defined in your file
     conn = sqlite3.connect(DB_PATH)
@@ -61,12 +65,29 @@ def summarize_text(text):
     except Exception as e:
         return f"An unexpected error occurred: {e}"
 
+
+
+# Summarize text using Gemini API
+def summarize_text_gemini(text):
+    try:
+        response = gemini_model.generate_content(f"  قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط منظمة {text}")
+        return response.text
+    except Exception as e:
+        return f"Error summarizing with Gemini: {e}"
+
+
 # Streamlit UI Configuration
 st.set_page_config(
     page_title="ملخص التقارير",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# Use columns to center the image
+col1, col2, col3,col4,col5 = st.columns([1, 1, 1, 1, 1])
+
+with col3:
+    st.image("logo_b.png", width=300)
 
 # Inject custom CSS for styling with enhanced aesthetics
 st.markdown(
@@ -160,12 +181,15 @@ with col3:
     final_filtered_data = filtered_data_type[filtered_data_type["year"] == selected_year]
     selected_file = st.selectbox("اختر الملف", options=final_filtered_data["name"].tolist() if not final_filtered_data.empty else ['لا يوجد ملفات'])
 
-# File Action Buttons
-col4, col5 = st.columns(2)
+
+# File Action Buttons (Modified)
+col4, col5, col6 = st.columns(3) # Added a third column
 with col4:
     display_button_clicked = st.button("عرض النص")
 with col5:
-    summarize_button_clicked = st.button("تلخيص النص")
+    summarize_button_clicked = st.button("تلخيص النص (Llama)")
+with col6:
+    summarize_button_gemini_clicked = st.button("تلخيص النص (Gemini)")
 
 # Main Content Area
 if selected_file and selected_file != 'لا يوجد ملفات':
@@ -175,16 +199,25 @@ if selected_file and selected_file != 'لا يوجد ملفات':
         if file_name.lower().endswith((".txt", ".md", ".csv")):
             text_content = file_content.decode("utf-8")
 
+
             # Display Text Content
             if display_button_clicked:
                 st.subheader("النص الكامل")
                 st.markdown(f"<div class='report-container'><p>{text_content}</p></div>", unsafe_allow_html=True)
             
              # Summarize Text Content
+
+       # Summarize Text Content (Llama)
             if summarize_button_clicked:
-                summary = summarize_text(text_content)  # Summarize directly from text_content
-                st.subheader("الملخص")
+                summary = summarize_text(text_content)
+                st.subheader("الملخص (Llama)")
                 st.markdown(f"<div class='report-container summary-box'><p>{summary}</p></div>", unsafe_allow_html=True)
-                
+
+            # Summarize Text Content (Gemini)
+            if summarize_button_gemini_clicked:
+                summary_gemini = summarize_text_gemini(text_content)
+                st.subheader("الملخص (Gemini)")
+                st.markdown(f"<div class='report-container summary-box'><p>{summary_gemini}</p></div>", unsafe_allow_html=True)
+    
 elif selected_file == 'لا يوجد ملفات':
-     st.warning("لا يوجد ملفات لهذا النوع والسنة")
+    st.warning("لا يوجد ملفات لهذا النوع والسنة")
