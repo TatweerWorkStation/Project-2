@@ -2,10 +2,13 @@ import streamlit as st
 import requests
 import sqlite3
 import pandas as pd
+import os
 import google.generativeai as genai
-
+from dotenv import load_dotenv
+load_dotenv()
 # Gemini API Configuration
-genai.configure(api_key="AIzaSyBvobnSepdXIp-Qmns2MjWXbO4BGLzpPlc")  # Replace with your actual key
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=GOOGLE_API_KEY)  # Replace with your actual key
 gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 # Database connection
@@ -105,11 +108,11 @@ st.markdown(
             background-color: #f8f9fa;
         }
         h1, h2, h3, h4, h5, h6 {
-            color: #2e5984;
+            color: #000;
             font-weight: 700;
         }
         .stButton button {
-            background-color: #2e5984;
+            background-color: #000;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -120,10 +123,10 @@ st.markdown(
             transition: background-color 0.3s, transform 0.2s;
             margin: 5px 0;
         }
-        .stButton button:hover {
-            background-color: #234b6e;
+        button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+            color: "#fff"
+      
         }
         .stSelectbox, .stTextArea textarea {
             border-radius: 8px;
@@ -136,7 +139,7 @@ st.markdown(
             transition: border-color 0.3s;
         }
         .stSelectbox:focus-within, .stTextArea textarea:focus-within {
-            border-color: #2e5984;
+            border-color: #000;
             box-shadow: 0 2px 6px rgba(46, 89, 132, 0.3);
         }
         .report-container {
@@ -157,7 +160,7 @@ st.markdown(
             padding: 2rem;
         }
         hr {
-            border-color: #2e5984;
+            border-color: #000;
             margin-top: 10px;
             margin-bottom: 20px;
         }
