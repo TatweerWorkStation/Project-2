@@ -87,18 +87,21 @@ st.set_page_config(
 )
 
 # Use columns to center the image
-col1, col2, col3,col4,col5 = st.columns([1, 1, 1, 1, 1])
+col1, col2, col3, = st.columns([1, 1, 1])
 
 with col3:
     st.image("logo_b.png", width=300)
-
+with col1:
+    st.title("ملخص التقارير")
 # Inject custom CSS for styling with enhanced aesthetics
 st.markdown(
     """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
-        body {
+        * {
             font-family: 'Tajawal', sans-serif;
+        }
+        body {
             direction: rtl;
             text-align: right;
             background-color: #f8f9fa;
@@ -123,9 +126,9 @@ st.markdown(
             transition: background-color 0.3s, transform 0.2s;
             margin: 5px 0;
         }
-        button:hover {
-            transform: translateY(-2px);
-            color: "#fff"
+        .stButton button:hover {
+            # transform: translateY(-2px);
+            color: white !important
       
         }
         .stSelectbox, .stTextArea textarea {
@@ -171,8 +174,8 @@ st.markdown(
 
 # Load data and setup filters
 data = load_data()
-st.title("ملخص التقارير")
-st.markdown("---")
+# st.title("ملخص التقارير")
+
 
 col1, col2, col3 = st.columns(3)
 with col1:

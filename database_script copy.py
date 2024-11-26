@@ -21,15 +21,16 @@ folders = [
 ]
 
 def extract_year(file_name):
-    # Robust regex to handle embedded years and various delimiters
-    match = re.search(r'(?:\b|\-|_)(\d{4})(?:\b|\.|\-|[a-zA-Z]|م|_|\d*)', file_name)
-
+    # Extracts a 4-digit year not part of a longer sequence
+    match = re.search(r'(?<!\d)(\d{4})(?!\d)', file_name)
+    
     if match:
         year = int(match.group(1))
-        if 1900 <= year <= 2100:
+        if 1900 <= year <= 2100:  # Ensures valid year range
             return str(year)
-
+    
     return 'NA'
+
 
 with sqlite3.connect(db_path) as conn:
     cursor = conn.cursor()
