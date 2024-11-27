@@ -48,8 +48,8 @@ Project Structure
 ├── .gitignore      # Files and directories to exclude from Git
 ├── Asistant_Prompt.txt  # (Optional) Prompts or instructions for the LLM
 ├── database_script.py   # Script for setting up the database
-└── main.py        # Main Streamlit application code
-
+├── config.py        # Main Streamlit application logic code
+└── config.py        # Main Streamlit UI code
 Database Setup
 The database_script.py file is used to create and populate the SQLite database. Make sure to run this script before using the application if the database doesn't exist or needs to be updated.
 
