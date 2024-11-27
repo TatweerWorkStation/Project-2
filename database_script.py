@@ -1,57 +1,88 @@
 import sqlite3
 import os
+import re
 
-# Database file
-db_path = r"C:\Users\A.I\Documents\Tatweer\Project 2\Database\reports.db"
+# Database file (use absolute path if needed)
+db_path = r"C:\Users\A.I\Documents\Tatweer\Project 2\Database\reports.db"  # Replace with your actual path
 
-# Directory structure
-base_dir = r"C:\Users\A.I\Documents\Tatweer\Project 2\Reports"
-folders = ["احصائيات نقدية ومصرفية", "النشرة القتصادية", "تقارير سنوية"]
+# Directory structure (use absolute path if needed)
+base_dir = r"C:\Users\A.I\Documents\Tatweer\Project 2\Reports"  # Replace with your actual path
+folders = [
+    "إحصاءات التجارة الخارجية",
+    "إحصائيات الناتج المحلي الإجمالي",
+    "إحصائيات نقدية ومصرفية",
+    "إستخدامات المصارف للنقد الأجنبي",
+    "الدفع الإلكتروني",
+    "الرقم القياسي لنفقة المعيشة",
+    "النشرة الإقتصادية",
+    "أوراق التعاون الدولي",
+    "تقارير سنوية",
+    "ميزان المدفوعات"
+]
 
-# Create the database and table
-conn = sqlite3.connect(db_path)
-cursor = conn.cursor()
-
-# Create the schema
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS reports (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    report_type TEXT NOT NULL,
-    year INTEGER NOT NULL,
-    path TEXT NOT NULL,
-    name TEXT NOT NULL,
-    file BLOB NOT NULL
-)
-""")
-conn.commit()
-
-# Helper function to get year from file name (assuming year is part of the name)
 def extract_year(file_name):
-    for word in file_name.split():
-        if word.isdigit() and len(word) == 4:
-            return int(word)
-    return None
+    # Extracts a 4-digit year not part of a longer sequence
+    match = re.search(r'(?<!\d)(\d{4})(?!\d)', file_name)
+    
+    if match:
+        year = int(match.group(1))
+        if 1900 <= year <= 2100:  # Ensures valid year range
+            return str(year)
+    
+    return 'NA'
 
-# Insert files into the database
-for folder in folders:
-    report_type = folder
-    folder_path = os.path.join(base_dir, folder)
 
-    if os.path.exists(folder_path):
-        for file_name in os.listdir(folder_path):
-            file_path = os.path.join(folder_path, file_name)
+with sqlite3.connect(db_path) as conn:
+    cursor = conn.cursor()
 
-            if os.path.isfile(file_path):
-                with open(file_path, "rb") as file:
-                    file_data = file.read()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS reports (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        report_type TEXT NOT NULL,
+        year TEXT,
+        path TEXT NOT NULL,
+        name TEXT NOT NULL,
+        file BLOB NOT NULL,
+        UNIQUE(report_type, name) ON CONFLICT REPLACE 
+    )
+    """)
 
-                year = extract_year(file_name) or 0  # Default to 0 if year not found
-                cursor.execute("""
-                INSERT INTO reports (report_type, year, path, name, file)
-                VALUES (?, ?, ?, ?, ?)
-                """, (report_type, year, file_path, file_name, file_data))
+    for folder in folders:
+        report_type = folder
+        folder_path = os.path.join(base_dir, folder)
 
-conn.commit()
-conn.close()
+        if os.path.exists(folder_path):
+            for file_name in os.listdir(folder_path):
+                file_path = os.path.join(folder_path, file_name)
 
-print("Database created and populated successfully!")
+                if os.path.isfile(file_path):
+                    try:
+                        with open(file_path, "rb") as file:
+                            file_data = file.read()
+
+                        year = extract_year(file_name)
+
+                        cursor.execute("""
+                        INSERT INTO reports (report_type, year, path, name, file)
+                        VALUES (?, ?, ?, ?, ?)
+                        """, (report_type, year, file_path, file_name, file_data))
+
+                    except Exception as e:
+                        print(f"Error processing file {file_path}: {e}")
+
+    conn.commit()
+
+print("Database created and populated.")
+
+
+# Example usage (querying and handling NULL years):
+with sqlite3.connect(db_path) as conn:
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM reports WHERE year IS NOT NULL")  # Or WHERE year = specific_year
+    results = cursor.fetchall()
+
+    for row in results:
+        # Access the year (it will be None if not extracted)
+        year = row[2]  # Index 2 corresponds to the 'year' column
+        # ... Process the row data as needed ...
+        print(row)
