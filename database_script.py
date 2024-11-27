@@ -3,10 +3,11 @@ import os
 import re
 
 # Database file (use absolute path if needed)
-db_path = r"C:\Users\A.I\Documents\Tatweer\Project 2\Database\reports.db"  # Replace with your actual path
+db_path = r"C:\Users\A.I\Documents\Tatweer\Project 2\Database\reports.db" 
 
 # Directory structure (use absolute path if needed)
-base_dir = r"C:\Users\A.I\Documents\Tatweer\Project 2\Reports"  # Replace with your actual path
+base_dir = r"C:\Users\A.I\Documents\Tatweer\Project 2\Reports"
+
 folders = [
     "إحصاءات التجارة الخارجية",
     "إحصائيات الناتج المحلي الإجمالي",
@@ -27,16 +28,14 @@ folders = [
 ]
 
 def extract_year(file_name):
-    # Extracts a 4-digit year not part of a longer sequence
-    match = re.search(r'(?<!\d)(\d{4})(?!\d)', file_name)
+    # Find all 4-digit sequences
+    years = re.findall(r'(?<!\d)(\d{4})(?!\d)', file_name)
     
-    if match:
-        year = int(match.group(1))
-        if 1900 <= year <= 2100:  # Ensures valid year range
-            return str(year)
+    # Convert to integers and filter valid years
+    valid_years = [int(year) for year in years if 1900 <= int(year) <= 2100]
     
-    return 'عام'
-
+    # Return the latest year if available
+    return str(max(valid_years)) if valid_years else 'عام'
 
 with sqlite3.connect(db_path) as conn:
     cursor = conn.cursor()
@@ -84,11 +83,9 @@ print("Database created and populated.")
 # Example usage (querying and handling NULL years):
 with sqlite3.connect(db_path) as conn:
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM reports WHERE year IS NOT NULL")  # Or WHERE year = specific_year
+    cursor.execute("SELECT * FROM reports WHERE year IS NOT NULL")  
     results = cursor.fetchall()
 
     for row in results:
-        # Access the year (it will be None if not extracted)
-        year = row[2]  # Index 2 corresponds to the 'year' column
-        # ... Process the row data as needed ...
+        year = row[2] 
         print(row)
