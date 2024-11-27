@@ -16,35 +16,27 @@ This Streamlit application provides a user-friendly interface for browsing, view
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/your-username/your-repo-name.git
-content_copy
 Use code with caution.
 Markdown
-
 Install required packages:
 
 pip install -r requirements.txt
-content_copy
 Use code with caution.
 Bash
-
 Set up your environment:
 
 Create a .env file in the root directory and add your Google API key:
 
 GOOGLE_API_KEY=YOUR_ACTUAL_API_KEY
-content_copy
 Use code with caution.
-
 Ensure your local LLM server is running at http://127.0.0.1:1234. (Adjust the URL in main.py if necessary.)
 
 Run the app:
 
 streamlit run main.py
-content_copy
 Use code with caution.
 Bash
 Usage
-
 Select the report type and year using the dropdown menus.
 
 Choose a specific report file.
@@ -62,18 +54,14 @@ Project Structure
 ├── Asistant_Prompt.txt  # (Optional) Prompts or instructions for the LLM
 ├── database_script.py   # Script for setting up the database
 └── main.py        # Main Streamlit application code
-content_copy
 Use code with caution.
 Database Setup
-
 The database_script.py file is used to create and populate the SQLite database. Make sure to run this script before using the application if the database doesn't exist or needs to be updated.
 
 Contributing
-
 Contributions are welcome! Feel free to open issues and pull requests.
 
 License
-
 [Specify your license here, e.g., MIT]
 
 Key improvements:
@@ -86,5 +74,3 @@ Key improvements:
 * Emphasis on the dual summarization options (Llama and Gemini).
 * Instructions for setting up the `.env` file.
 *  A more visually appealing layout using Markdown formatting.
-content_copy
-Use code with caution.
