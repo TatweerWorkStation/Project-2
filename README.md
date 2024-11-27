@@ -27,16 +27,12 @@ Set up your environment:
 Create a .env file in the root directory and add your Google API key:
 
 GOOGLE_API_KEY=YOUR_ACTUAL_API_KEY
-Use code with caution.
-Ensure your local LLM server is running at http://127.0.0.1:1234. (Adjust the URL in main.py if necessary.)
+
+Ensure your local LLM server is running at http://127.0.0.1:1234.
 
 Run the app:
 
 streamlit run main.py
-Use code with caution.
-Bash
-Usage
-Select the report type and year using the dropdown menus.
 
 Choose a specific report file.
 
@@ -53,12 +49,7 @@ Project Structure
 ├── Asistant_Prompt.txt  # (Optional) Prompts or instructions for the LLM
 ├── database_script.py   # Script for setting up the database
 └── main.py        # Main Streamlit application code
-Use code with caution.
+
 Database Setup
 The database_script.py file is used to create and populate the SQLite database. Make sure to run this script before using the application if the database doesn't exist or needs to be updated.
 
-Contributing
-Contributions are welcome! Feel free to open issues and pull requests.
-
-License
-[Specify your license here, e.g., MIT]
