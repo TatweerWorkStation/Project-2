@@ -1,6 +1,6 @@
 # تقارير مصرف ليبيا المركزي - أداة التلخيص
 
-This Streamlit application provides a user-friendly interface for browsing, viewing, and summarizing reports from the Central Bank of Libya.  It leverages both a local LLM (like Llama) and Google's Gemini API for text summarization in Arabic.
+This Streamlit application provides a user-friendly interface for browsing, viewing, and summarizing reports from the Central Bank of Libya. It leverages both a local LLM (like Llama) and Google's Gemini API for text summarization in Arabic.
 
 ## Features
 
@@ -8,8 +8,7 @@ This Streamlit application provides a user-friendly interface for browsing, view
 * **Text Display:** View the full text of selected reports.
 * **Dual Summarization Options:** Generate summaries using either a local LLM or the Gemini API.
 * **Arabic Language Support:** The entire application, including summarization, is tailored for Arabic text.
-* **Clean and Modern UI:**  Utilizes custom CSS for an enhanced user experience.
-
+* **Clean and Modern UI:** Utilizes custom CSS for an enhanced user experience.
 
 ## Installation
 
@@ -63,14 +62,3 @@ Contributions are welcome! Feel free to open issues and pull requests.
 
 License
 [Specify your license here, e.g., MIT]
-
-Key improvements:
-
-* Clearer explanations of features and installation steps.
-* Detailed project structure description.
-* Information about database setup.
-* Placeholder for license information.
-* Arabic titles and descriptions where relevant, matching the application's language.
-* Emphasis on the dual summarization options (Llama and Gemini).
-* Instructions for setting up the `.env` file.
-*  A more visually appealing layout using Markdown formatting.
