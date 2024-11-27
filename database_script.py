@@ -17,7 +17,13 @@ folders = [
     "النشرة الإقتصادية",
     "أوراق التعاون الدولي",
     "تقارير سنوية",
-    "ميزان المدفوعات"
+    "ميزان المدفوعات",
+    "بيانات الإيراد والإنفاق",
+    "تقارير رقابية",
+    "تقارير سنوية",
+    "عمليات السوق",
+    "ميزان المدفوعات",
+    "أداء المصارف الليبية",
 ]
 
 def extract_year(file_name):
@@ -29,7 +35,7 @@ def extract_year(file_name):
         if 1900 <= year <= 2100:  # Ensures valid year range
             return str(year)
     
-    return 'NA'
+    return 'عام'
 
 
 with sqlite3.connect(db_path) as conn:

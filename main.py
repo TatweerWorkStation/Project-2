@@ -5,7 +5,9 @@ import pandas as pd
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
+
 load_dotenv()
+
 # Gemini API Configuration
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)  # Replace with your actual key
@@ -51,7 +53,7 @@ def summarize_text(text):
         payload = {
             "model": "meta-llama-3.1-8b-instruct",
             "messages": [
-                {"role": "system", "content": "Always answer in bullet points."},
+                {"role": "system", "content": "You are an expert summarization model for markdown files from The Central Bank of Libya, Always summarize in good markdown clean organized format and use labels and headings with bullet points."},
                 {"role": "user", "content": f'قم بتخليص الملف التالي باللغة العربية: {text}'}],
             "temperature": 0,
             "max_tokens": 512,
@@ -73,7 +75,7 @@ def summarize_text(text):
 # Summarize text using Gemini API
 def summarize_text_gemini(text):
     try:
-        response = gemini_model.generate_content(f"  قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط منظمة {text}")
+        response = gemini_model.generate_content(f"قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط وعناوين منظمة شاملة {text}")
         return response.text
     except Exception as e:
         return f"Error summarizing with Gemini: {e}"
@@ -81,7 +83,7 @@ def summarize_text_gemini(text):
 
 # Streamlit UI Configuration
 st.set_page_config(
-    page_title="ملخص التقارير",
+    page_title="تقارير مصرف ليبيا المركزي - أداة التلخيص",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -90,9 +92,9 @@ st.set_page_config(
 col1, col2, col3, = st.columns([1, 1, 1])
 
 with col3:
-    st.image("Images\logo_b.png", width=300)
+    st.image("Images\logo.png", width=300)
 with col1:
-    st.title("ملخص التقارير")
+    st.title("تقارير مصرف ليبيا المركزي - أداة التلخيص")
 # Inject custom CSS for styling with enhanced aesthetics
 st.markdown(
     """
@@ -174,7 +176,6 @@ st.markdown(
 
 # Load data and setup filters
 data = load_data()
-# st.title("ملخص التقارير")
 
 
 col1, col2, col3 = st.columns(3)
@@ -211,7 +212,6 @@ if selected_file and selected_file != 'لا يوجد ملفات':
                 st.subheader("النص الكامل")
                 st.markdown(f"<div class='report-container'><p>{text_content}</p></div>", unsafe_allow_html=True)
             
-             # Summarize Text Content
 
        # Summarize Text Content (Llama)
             if summarize_button_clicked:
