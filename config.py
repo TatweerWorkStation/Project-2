@@ -52,7 +52,7 @@ def summarize_text(text):
         payload = {
             "model": "meta-llama-3.1-8b-instruct",
             "messages": [
-              {"role": "system", "content": "You are an expert summarization model for markdown files from The Central Bank of Libya, Always summarize in good markdown clean organized format and use labels and headings with bullet points."},
+              {"role": "system", "content": "You are an expert summarization model, Always summarize in good markdown clean organized format and use bullet points."},
                 {"role": "user", "content": f'قم بتخليص الملف التالي باللغة العربية: {text}'}
             ],
             "temperature": 0,
