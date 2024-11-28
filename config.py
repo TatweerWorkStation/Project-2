@@ -3,6 +3,7 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 import pandas as pd
+import requests
 
 # Load environment variables
 load_dotenv()
@@ -51,7 +52,7 @@ def summarize_text(text):
         payload = {
             "model": "meta-llama-3.1-8b-instruct",
             "messages": [
-                {"role": "system", "content": "Always answer in bullet points."},
+              {"role": "system", "content": "You are an expert summarization model for markdown files from The Central Bank of Libya, Always summarize in good markdown clean organized format and use labels and headings with bullet points."},
                 {"role": "user", "content": f'قم بتخليص الملف التالي باللغة العربية: {text}'}
             ],
             "temperature": 0,
@@ -72,7 +73,7 @@ def summarize_text(text):
 
 def summarize_text_gemini(text):
     try:
-        response = gemini_model.generate_content(f"  قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط منظمة {text}")
+        response = gemini_model.generate_content(f"قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط وعناوين منظمة شاملة {text}")
         return response.text
     except Exception as e:
         return f"Error summarizing with Gemini: {e}"
