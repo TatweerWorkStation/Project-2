@@ -1,5 +1,6 @@
 import streamlit as st
-from config import load_data, load_file, summarize_text
+from config import load_data, load_md, load_pdf, summarize_text_gemini, summarize_text_gemini_stream
+import base64
 
 # Set page configuration
 st.set_page_config(
@@ -68,18 +69,21 @@ else:
 st.markdown("---")
 pdf_col, summary_col = st.columns([1, 1])
 
+
 with pdf_col:
     st.markdown('<h3 classname="page-font mt-8">عرض الملف</h3>', unsafe_allow_html=True)
 
     if "selected_file_id" in st.session_state:
         file_id = st.session_state["selected_file_id"]
-        file_name, file_content = load_file(file_id)
+        file_name, file_content = load_pdf(file_id)
         if file_content:
-            # Render PDF viewer (replace with actual viewer logic)
-            import base64
-            base64_pdf = base64.b64encode(file_content).decode('utf-8')
-            pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600px"></iframe>'
-            st.markdown(pdf_display, unsafe_allow_html=True)
+            # Ensure that the content is in bytes (binary), not string
+            if isinstance(file_content, bytes):
+                base64_pdf = base64.b64encode(file_content).decode('utf-8')
+                pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600px"></iframe>'
+                st.markdown(pdf_display, unsafe_allow_html=True)
+            else:
+                st.warning("الملف ليس بتنسيق PDF.")
         else:
             st.warning("تعذر تحميل الملف. يرجى المحاولة مرة أخرى.")
     else:
@@ -91,10 +95,11 @@ with summary_col:
     if "selected_file_id" in st.session_state:
         if st.button("تلخيص النص"):
             file_id = st.session_state["selected_file_id"]
-            file_name, file_content = load_file(file_id)
+            file_name, file_content = load_md(file_id)
             if file_content:
                 text_content = file_content.decode("utf-8")
-                summary = summarize_text(text_content)
+                # st.write_stream(summarize_text_gemini_stream(text_content))
+                summary = summarize_text_gemini(text_content)
                 st.write(summary)
             else:
                 st.warning("تعذر تحميل الملف. يرجى المحاولة مرة أخرى.")

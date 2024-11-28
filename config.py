@@ -29,19 +29,41 @@ def load_data():  # Ensure this function is correctly defined in your file
         conn.close()
 
 
-def load_file(file_id):
+def load_pdf(file_id):
+    """
+    Loads the PDF file from the database based on the file ID.
+    """
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT name, file FROM reports WHERE id = ?", (file_id,))
+        cursor.execute("SELECT name, pdf_file FROM reports WHERE id = ?", (file_id,))
         row = cursor.fetchone()
-        if row:  # If a matching record is found
-            return row[0], row[1]
+        if row:
+            return row[0], row[1]  # Returning the name and the pdf_file content
         return None, None
-    except sqlite3.Error as e:  # Handle SQLite errors
+    except sqlite3.Error as e:
         return f"Database error: {e}", None
     finally:
         conn.close()
+
+
+def load_md(file_id):
+    """
+    Loads the MD file from the database based on the file ID.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT name, md_file FROM reports WHERE id = ?", (file_id,))
+        row = cursor.fetchone()
+        if row:
+            return row[0], row[1]  # Returning the name and the md_file content
+        return None, None
+    except sqlite3.Error as e:
+        return f"Database error: {e}", None
+    finally:
+        conn.close()
+
 
 
 def summarize_text(text):
@@ -73,5 +95,13 @@ def summarize_text_gemini(text):
     try:
         response = gemini_model.generate_content(f"قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط وعناوين منظمة شاملة {text}")
         return response.text
+    except Exception as e:
+        return f"Error summarizing with Gemini: {e}"
+    
+def summarize_text_gemini_stream(text):
+    try:
+        response = gemini_model.generate_content(f"قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط وعناوين منظمة شاملة {text}",stream=True)
+        for chunk in response:
+            yield chunk.get("text","")
     except Exception as e:
         return f"Error summarizing with Gemini: {e}"
