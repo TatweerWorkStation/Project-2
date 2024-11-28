@@ -2,11 +2,11 @@ import sqlite3
 import os
 import re
 
-# Database file (use absolute path if needed)
-db_path = r"C:\Users\A.I\Documents\Tatweer\Project 2\Database\reports.db" 
+base_dir = os.path.join(os.getcwd(), "Reports")
 
-# Directory structure (use absolute path if needed)
-base_dir = r"C:\Users\A.I\Documents\Tatweer\Project 2\Reports"
+# Database path relative to the base directory
+db_path = os.path.join(os.getcwd(), "Database", "reports.db")
+
 
 folders = [
     "إحصاءات التجارة الخارجية",
