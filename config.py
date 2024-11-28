@@ -33,15 +33,13 @@ def load_file(file_id):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT id, name, file FROM reports")
-        rows = cursor.fetchall()
-        for row in rows:
-            if row[0] == file_id:  # Match id
-                file_name, file_content = row[1], row[2]
-                return file_name, file_content
+        cursor.execute("SELECT name, file FROM reports WHERE id = ?", (file_id,))
+        row = cursor.fetchone()
+        if row:  # If a matching record is found
+            return row[0], row[1]
         return None, None
     except sqlite3.Error as e:  # Handle SQLite errors
-        return f"Database error: {e}"
+        return f"Database error: {e}", None
     finally:
         conn.close()
 
