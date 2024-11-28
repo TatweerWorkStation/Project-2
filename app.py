@@ -11,7 +11,7 @@ st.set_page_config(
 # Page Title and Logo
 col1, col2 = st.columns([4, 1])
 with col1:
-    st.markdown('<h1 style="text-align: center;">تقارير مصرف ليبيا المركزي - أداة التلخيص</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 classname="page-font">تقارير مصرف ليبيا المركزي - أداة التلخيص</h1>', unsafe_allow_html=True)
 
     
 with col2:
@@ -49,7 +49,7 @@ if selected_type != "عرض الكل":
     filtered_data = filtered_data[filtered_data["report_type"] == selected_type]
 
 # Files Table Section
-st.markdown("### الملفات المتاحة:")
+st.markdown('<h3 classname="page-font mt-8">الملفات المتاحة</h3>', unsafe_allow_html=True)
 if not filtered_data.empty:
     # Create a scrollable container for the table
     with st.container(height=300, border=False):
@@ -69,7 +69,8 @@ st.markdown("---")
 pdf_col, summary_col = st.columns([1, 1])
 
 with pdf_col:
-    st.subheader("عرض الملف")
+    st.markdown('<h3 classname="page-font mt-8">عرض الملف</h3>', unsafe_allow_html=True)
+
     if "selected_file_id" in st.session_state:
         file_id = st.session_state["selected_file_id"]
         file_name, file_content = load_file(file_id)
@@ -85,7 +86,8 @@ with pdf_col:
         st.write("اضغط على 'عرض' لعرض الملف هنا.")
 
 with summary_col:
-    st.subheader("الملخص")
+    st.markdown('<h3 classname="page-font mt-8">الملخص</h3>', unsafe_allow_html=True)
+
     if "selected_file_id" in st.session_state:
         if st.button("تلخيص النص"):
             file_id = st.session_state["selected_file_id"]
@@ -116,7 +118,7 @@ st.markdown(
         .stApp {
             padding-top: 60px;
         }
-        .page-title {
+        .page-font {
             font-family: 'Tajawal', sans-serif
         }
         .title-column {
@@ -127,6 +129,9 @@ st.markdown(
             background-color: white;
             padding: 20px;
             border-radius: 12px;
+        }
+        .mt-8 {
+            margin-bottom: 8px
         }
     </style>
     """,
