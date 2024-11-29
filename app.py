@@ -1,5 +1,5 @@
 import streamlit as st
-from config import load_data, load_md, load_pdf, summarize_text_gemini, summarize_text_gemini_stream
+from config import load_data, load_md, load_pdf, summarize_text_gemini
 import base64
 
 # Set page configuration
@@ -17,6 +17,7 @@ with col1:
     
 with col2:
     st.image("Images/logo.png", use_container_width=True)
+
 # Load Data
 data = load_data()
 
@@ -39,8 +40,6 @@ with st.container():
         else:
             applicable_years = sorted(set(data["year"]), reverse=True)
         selected_year = st.selectbox("اختر السنة", options=["عرض الكل"] + applicable_years)
-
-
 
 # Filter Data
 filtered_data = data.copy()
@@ -69,20 +68,22 @@ else:
 st.markdown("---")
 pdf_col, spacer_col, summary_col = st.columns([1, 0.1, 1])
 
+
 with pdf_col:
     st.markdown('<h3 classname="page-font mt-8">عرض الملف</h3>', unsafe_allow_html=True)
 
     if "selected_file_id" in st.session_state:
         file_id = st.session_state["selected_file_id"]
-        file_name, file_content = load_pdf(file_id)
-        if file_content:
-            # Ensure that the content is in bytes (binary), not string
-            if isinstance(file_content, bytes):
-                base64_pdf = base64.b64encode(file_content).decode('utf-8')
-                pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600px"></iframe>'
-                st.markdown(pdf_display, unsafe_allow_html=True)
-            else:
-                st.warning("الملف ليس بتنسيق PDF.")
+        file_path = load_pdf(file_id)
+        if file_path:
+            try:
+                with open(file_path, "rb") as pdf_file:
+                    file_content = pdf_file.read()
+                    base64_pdf = base64.b64encode(file_content).decode('utf-8')
+                    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600px"></iframe>'
+                    st.markdown(pdf_display, unsafe_allow_html=True)
+            except Exception as e:
+                st.warning(f"تعذر تحميل الملف: {e}")
         else:
             st.warning("تعذر تحميل الملف. يرجى المحاولة مرة أخرى.")
     else:
@@ -94,16 +95,29 @@ with summary_col:
     if "selected_file_id" in st.session_state:
         if st.button("تلخيص النص"):
             file_id = st.session_state["selected_file_id"]
-            file_name, file_content = load_md(file_id)
-            if file_content:
-                text_content = file_content.decode("utf-8")
-                with st.spinner("جارٍ تلخيص النص..."):
-                    summary = summarize_text_gemini(text_content)
-                st.write(summary)
+            file_path = load_md(file_id)  # Load the file path
+
+            # Check if file_path is a valid string (not an error message)
+            if isinstance(file_path, str) and file_path:
+                try:
+                    # Open and read the markdown file
+                    with open(file_path, "r", encoding="utf-8") as md_file:
+                        text_content = md_file.read()
+
+                    # Generate the summary with the loaded content
+                    with st.spinner("جارٍ تلخيص النص..."):
+                        summary = summarize_text_gemini(text_content)
+                    st.write(summary)
+
+                except Exception as e:
+                    st.warning(f"تعذر تحميل الملف: {e}")
             else:
-                st.warning("تعذر تحميل الملف. يرجى المحاولة مرة أخرى.")
+                # If the file path is None or error message, show a warning
+                st.warning(file_path)
     else:
         st.write("اضغط على 'عرض' ثم 'تلخيص النص' لعرض الملخص هنا.")
+
+
 
 
 st.markdown(

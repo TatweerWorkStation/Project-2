@@ -1,68 +1,103 @@
-import sqlite3
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 import pandas as pd
 import requests
 
-# Load environment variables
 load_dotenv()
 
-# Gemini API Configuration
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-genai.configure(api_key=GOOGLE_API_KEY)  # Replace with your actual key
+genai.configure(api_key=GOOGLE_API_KEY)  
 gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 # Database connection
 DB_PATH = os.path.join(os.path.dirname(__file__), "Database", "reports.db")
 
+CSV_FILE_PATH = os.path.join(os.getcwd(), "reports.csv")
 
-def load_data():  # Ensure this function is correctly defined in your file
-    conn = sqlite3.connect(DB_PATH)
+def load_data():
     try:
-        query = "SELECT id, report_type, year, name FROM reports"
-        df = pd.read_sql_query(query, conn)
+        df = pd.read_csv(CSV_FILE_PATH)
         return df
-    except pd.io.sql.DatabaseError as e:
-        return f"مشكلة مع قاعدة البيانات: {e}"  # Return error message if any issue occurs
-    finally:
-        conn.close()
-
+    except Exception as e:
+        return f"مشكلة مع ملف CSV: {e}"  # Return error message if any issue occurs
 
 def load_pdf(file_id):
     """
-    Loads the PDF file from the database based on the file ID.
+    Loads the PDF file path from the CSV file based on the file ID.
     """
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
     try:
-        cursor.execute("SELECT name, pdf_file FROM reports WHERE id = ?", (file_id,))
-        row = cursor.fetchone()
-        if row:
-            return row[0], row[1]  # Returning the name and the pdf_file content
-        return None, None
-    except sqlite3.Error as e:
-        return f"Database error: {e}", None
-    finally:
-        conn.close()
-
+        df = pd.read_csv(CSV_FILE_PATH)
+        file_path = df.loc[df['id'] == file_id, 'pdf_path'].squeeze()
+        if not pd.isna(file_path):
+            return file_path
+        return None
+    except Exception as e:
+        return f"مشكلة مع ملف CSV: {e}"
 
 def load_md(file_id):
     """
-    Loads the MD file from the database based on the file ID.
+    Loads the MD file path from the CSV file based on the file ID.
     """
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
     try:
-        cursor.execute("SELECT name, md_file FROM reports WHERE id = ?", (file_id,))
-        row = cursor.fetchone()
-        if row:
-            return row[0], row[1]  # Returning the name and the md_file content
-        return None, None
-    except sqlite3.Error as e:
-        return f"Database error: {e}", None
-    finally:
-        conn.close()
+        df = pd.read_csv(CSV_FILE_PATH)
+        row = df[df['id'] == file_id]
+        
+        if not row.empty:
+            
+            file_path = row.iloc[0]['md_path']
+            return file_path
+        return None
+    except Exception as e:
+        return f"مشكلة مع ملف CSV: {e}", None
+
+    
+# def load_data():  # Ensure this function is correctly defined in your file
+#     conn = sqlite3.connect(DB_PATH)
+#     try:
+#         query = "SELECT id, report_type, year, name FROM reports"
+#         df = pd.read_sql_query(query, conn)
+#         return df
+#     except pd.io.sql.DatabaseError as e:
+#         return f"مشكلة مع قاعدة البيانات: {e}"  # Return error message if any issue occurs
+#     finally:
+#         conn.close()
+
+
+# def load_pdf(file_id):
+#     """
+#     Loads the PDF file from the database based on the file ID.
+#     """
+#     conn = sqlite3.connect(DB_PATH)
+#     cursor = conn.cursor()
+#     try:
+#         cursor.execute("SELECT name, pdf_file FROM reports WHERE id = ?", (file_id,))
+#         row = cursor.fetchone()
+#         if row:
+#             return row[0], row[1]  # Returning the name and the pdf_file content
+#         return None, None
+#     except sqlite3.Error as e:
+#         return f"Database error: {e}", None
+#     finally:
+#         conn.close()
+
+
+# def load_md(file_id):
+#     """
+#     Loads the MD file from the database based on the file ID.
+#     """
+#     conn = sqlite3.connect(DB_PATH)
+#     cursor = conn.cursor()
+#     try:
+#         cursor.execute("SELECT name, md_file FROM reports WHERE id = ?", (file_id,))
+#         row = cursor.fetchone()
+#         if row:
+#             return row[0], row[1]  # Returning the name and the md_file content
+#         return None, None
+#     except sqlite3.Error as e:
+#         return f"Database error: {e}", None
+#     finally:
+#         conn.close()
 
 
 
