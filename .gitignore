@@ -1,3 +1,4 @@
 .env
 .venv
 reports.csv
+Database/reports.db
