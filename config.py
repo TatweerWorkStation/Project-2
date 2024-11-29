@@ -24,7 +24,7 @@ def load_data():  # Ensure this function is correctly defined in your file
         df = pd.read_sql_query(query, conn)
         return df
     except pd.io.sql.DatabaseError as e:
-        return f"Database error: {e}"  # Return error message if any issue occurs
+        return f"مشكلة مع قاعدة البيانات: {e}"  # Return error message if any issue occurs
     finally:
         conn.close()
 
@@ -72,7 +72,7 @@ def summarize_text(text):
         payload = {
             "model": "meta-llama-3.1-8b-instruct",
             "messages": [
-              {"role": "system", "content": "You are an expert summarization model, Always summarize in good markdown clean organized format and use bullet points."},
+              {"role": "system", "content": "Always summarize in good markdown clean organized format and use bullet points."},
                 {"role": "user", "content": f'قم بتخليص الملف التالي باللغة العربية: {text}'}
             ],
             "temperature": 0,
@@ -86,22 +86,22 @@ def summarize_text(text):
     except requests.exceptions.RequestException as e:
         return f"Error communicating with LLM server: {e}"
     except (KeyError, IndexError) as e:
-        return f"Error parsing LLM response: {e}"
+        return f"خلل في معالجة الرد: {e}"
     except Exception as e:
-        return f"An unexpected error occurred: {e}"
+        return f"حدث خطأ غير متوقع: {e}"
 
 
 def summarize_text_gemini(text):
     try:
-        response = gemini_model.generate_content(f"قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط وعناوين منظمة شاملة {text}")
+        response = gemini_model.generate_content(f"قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط وعناوين منظمة و شاملة {text}")
         return response.text
     except Exception as e:
-        return f"Error summarizing with Gemini: {e}"
+        return f"يوجد خلل في التلخيص : {e}"
     
 def summarize_text_gemini_stream(text):
     try:
-        response = gemini_model.generate_content(f"قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط وعناوين منظمة شاملة {text}",stream=True)
+        response = gemini_model.generate_content(f"قم بتلخيص النص التالي باللغة العربية مع استخدام نقاط وعناوين منظمة و شاملة {text}",stream=True)
         for chunk in response:
             yield chunk.get("text","")
     except Exception as e:
-        return f"Error summarizing with Gemini: {e}"
+        return f"يوجد خلل في التلخيص : {e}"

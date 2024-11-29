@@ -67,8 +67,7 @@ else:
 
 # Bottom Section: PDF Viewer and Summary
 st.markdown("---")
-pdf_col, summary_col = st.columns([1, 1])
-
+pdf_col, spacer_col, summary_col = st.columns([1, 0.1, 1])
 
 with pdf_col:
     st.markdown('<h3 classname="page-font mt-8">عرض الملف</h3>', unsafe_allow_html=True)
@@ -98,8 +97,8 @@ with summary_col:
             file_name, file_content = load_md(file_id)
             if file_content:
                 text_content = file_content.decode("utf-8")
-                # st.write_stream(summarize_text_gemini_stream(text_content))
-                summary = summarize_text_gemini(text_content)
+                with st.spinner("جارٍ تلخيص النص..."):
+                    summary = summarize_text_gemini(text_content)
                 st.write(summary)
             else:
                 st.warning("تعذر تحميل الملف. يرجى المحاولة مرة أخرى.")
