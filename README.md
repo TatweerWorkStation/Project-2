@@ -54,6 +54,6 @@ Click "تلخيص النص (Llama)" or "تلخيص النص (Gemini)" to generat
 - **config.py**        # Main Streamlit application logic code
 - **config.py**        # Main Streamlit UI code (Note: Duplicate `config.py`)
 Database Setup
-The database_pandas.py file is used to create and populate the SQLite database. Make sure to run this script before using the application if the database doesn't exist or needs to be updated.
+The database_pandas.py file is used to create and populate the csv file. Make sure to run this script before using the application if the database doesn't exist or needs to be updated.
 
 
