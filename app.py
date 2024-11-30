@@ -1,5 +1,5 @@
-import streamlit as st
-from config import load_data, load_md, load_pdf, summarize_text_gemini
+import streamlit as st 
+from config import load_data, load_md, load_pdf, summarize_text_gemini, summarize_text_gemini_stream
 import base64
 
 # Set page configuration
@@ -69,7 +69,6 @@ else:
 st.markdown("---")
 pdf_col, spacer_col, summary_col = st.columns([1, 0.1, 1])
 
-
 with pdf_col:
     st.markdown('<h3 classname="page-font mt-8">عرض الملف</h3>', unsafe_allow_html=True)
 
@@ -105,10 +104,13 @@ with summary_col:
                     with open(file_path, "r", encoding="utf-8") as md_file:
                         text_content = md_file.read()
 
-                    # Generate the summary with the loaded content
+                    # Define the generator for streaming
+                    summary_generator = summarize_text_gemini_stream(text_content)
+
+                    # Display the summary using st.write_stream
                     with st.spinner("جارٍ تلخيص النص..."):
-                        summary = summarize_text_gemini(text_content)
-                    st.write(summary)
+                        summary = st.write_stream(summary_generator)
+                    st.success("تم تلخيص النص بنجاح.")
 
                 except Exception as e:
                     st.warning(f"تعذر تحميل الملف: {e}")
@@ -118,9 +120,7 @@ with summary_col:
     else:
         st.write("اضغط على 'عرض' ثم 'تلخيص النص' لعرض الملخص هنا.")
 
-
-
-
+# Add CSS for better table styling
 st.markdown(
     """
     <style>
@@ -149,6 +149,21 @@ st.markdown(
         }
         .mt-8 {
             margin-bottom: 8px
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        td {
+            text-align: center;
         }
     </style>
     """,
