@@ -85,7 +85,7 @@ with sqlite3.connect(db_path) as conn:
                         with open(files['.pdf'], "rb") as pdf_file:
                             pdf_file_data = pdf_file.read()
                     except Exception as e:
-                        print(f"Error reading PDF file {files['.pdf']}: {e}")
+                        print(f"خلل في قراءة ملف PDF {files['.pdf']}: {e}")
 
                 # Read the MD file content, if available
                 if '.md' in files:
@@ -93,7 +93,7 @@ with sqlite3.connect(db_path) as conn:
                         with open(files['.md'], "rb") as md_file:
                             md_file_data = md_file.read()
                     except Exception as e:
-                        print(f"Error reading MD file {files['.md']}: {e}")
+                        print(f"خلل في قراءة ملف MD {files['.md']}: {e}")
 
                 # Extract the year from the file name
                 year = extract_year(base_name)
@@ -105,7 +105,7 @@ with sqlite3.connect(db_path) as conn:
                     VALUES (?, ?, ?, ?, ?, ?)
                     """, (report_type, year, folder_path, base_name, pdf_file_data, md_file_data))
                 except Exception as e:
-                    print(f"Error inserting data for {base_name}: {e}")
+                    print(f"خلل في ادخال البيانات {base_name}: {e}")
 
     # Commit the changes to the database
     conn.commit()

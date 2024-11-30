@@ -6,8 +6,8 @@ import base64
 st.set_page_config(
     page_title="تقارير مصرف ليبيا المركزي - أداة التلخيص",
     layout="wide",
-    initial_sidebar_state="collapsed",
-    page_icon="icon.png",
+    initial_sidebar_state="collapsed" ,
+    page_icon="Images/icon.png"
 )
 
 # Page Title and Logo
