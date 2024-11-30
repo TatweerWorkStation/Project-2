@@ -6,7 +6,8 @@ import base64
 st.set_page_config(
     page_title="تقارير مصرف ليبيا المركزي - أداة التلخيص",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
+    page_icon="icon.png",
 )
 
 # Page Title and Logo
@@ -130,8 +131,6 @@ st.markdown(
         body {
             direction: rtl;
             text-align: right;
-            background-color: #f8f9fa;
-            color: #343a40;
         }
         .stApp {
             padding-top: 60px;
