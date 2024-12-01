@@ -6,3 +6,4 @@ google.generativeai
 dotenv
 sqlite3
 pymongo
+streamlit_pdf_viewer
