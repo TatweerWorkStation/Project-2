@@ -17,7 +17,7 @@ with col1:
 
     
 with col2:
-    st.image("Images/logo.png", use_container_width=True)
+    st.image("Images/logo2.png", use_container_width=True)
 
 # Load Data
 data = load_data()
