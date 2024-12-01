@@ -43,6 +43,7 @@ with open(csv_file_path, "w", newline="", encoding="utf-8") as csv_file:
 
                 if os.path.isfile(file_path):
                     base_name, ext = os.path.splitext(file_name)
+                    print(ext)
                     if base_name not in file_groups:
                         file_groups[base_name] = {}
                     file_groups[base_name][ext] = file_path
