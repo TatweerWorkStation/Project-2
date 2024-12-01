@@ -1,6 +1,8 @@
 import streamlit as st 
 from config import load_data, load_md, load_pdf, summarize_text_gemini, summarize_text_gemini_stream
 import base64
+from streamlit_pdf_viewer import pdf_viewer
+
 
 # Set page configuration
 st.set_page_config(
@@ -78,10 +80,8 @@ with pdf_col:
         if file_path:
             try:
                 with open(file_path, "rb") as pdf_file:
-                    file_content = pdf_file.read()
-                    base64_pdf = base64.b64encode(file_content).decode('utf-8')
-                    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600px"></iframe>'
-                    st.markdown(pdf_display, unsafe_allow_html=True)
+                    pdf_viewer(input=file_path, width=700, height=600)  # Set custom width and height
+
             except Exception as e:
                 st.warning(f"تعذر تحميل الملف: {e}")
         else:
