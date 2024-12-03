@@ -33,6 +33,7 @@ if language == "English":
     load_error_message = "Failed to load the file. Please try again."
     loading_summary_message = "Summarizing the text..."
     summary_success_message = "Report summarized successfully."
+    take_caution ='Summarization Tool can make mistakes. Check important info.'
 else:
     page_direction = "rtl"
     text_align = "right"
@@ -48,6 +49,7 @@ else:
     load_error_message = "تعذر تحميل الملف. يرجى المحاولة مرة أخرى."
     loading_summary_message = "جاري تلخيص النص..."
     summary_success_message = "تم تلخيص التقرير بنجاح."
+    take_caution ='.أداة التلخيص قد ترتكب أخطاء. تحقق من المعلومات المهمة'
     
 
 st.markdown(
@@ -187,7 +189,7 @@ with summary_col:
                     with st.spinner(loading_summary_message):
                         summary = st.write_stream(summary_generator)
                     # st.success(summary_success_message)
-                    st.warning ('الرجاء الاستخدام بحذر')
+                    st.warning (take_caution)
                     st.toast(summary_success_message,icon='✅')
                 except Exception as e:
                     st.warning(f"{load_error_message}: {e}")
