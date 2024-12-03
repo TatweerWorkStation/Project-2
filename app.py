@@ -32,7 +32,7 @@ if language == "English":
     no_files_warning = "No files available for this type and year."
     load_error_message = "Failed to load the file. Please try again."
     loading_summary_message = "Summarizing the text..."
-    summary_success_message = "Text summarized successfully."
+    summary_success_message = "Report summarized successfully."
 else:
     page_direction = "rtl"
     text_align = "right"
@@ -46,8 +46,9 @@ else:
     file_display_label = "عرض الملف"
     no_files_warning = "لا يوجد ملفات متاحة لهذا النوع والسنة."
     load_error_message = "تعذر تحميل الملف. يرجى المحاولة مرة أخرى."
-    loading_summary_message = "جارٍ تلخيص النص..."
-    summary_success_message = "تم تلخيص النص بنجاح."
+    loading_summary_message = "جاري تلخيص النص..."
+    summary_success_message = "تم تلخيص التقرير بنجاح."
+    
 
 st.markdown(
     f"""
@@ -70,7 +71,7 @@ with col1:
     st.markdown(f'<h1 classname="page-font">{page_title}</h1>', unsafe_allow_html=True)
 
 with col2:
-    st.image("Images/logo2.png", use_container_width=True)
+    st.image("Images/logo3.png", use_container_width=True)
 
 # Load Data
 data = load_data()
@@ -120,7 +121,7 @@ else:
 
 # Bottom Section: PDF Viewer and Summary
 st.markdown("---")
-pdf_col, spacer_col, summary_col = st.columns([1, 0.1, 1])
+pdf_col, spacer_col, summary_col = st.columns([1, 0.1, 2])
 
 with pdf_col:
     st.markdown(f'<h3 classname="page-font mt-8">{file_display_label}</h3>', unsafe_allow_html=True)
@@ -185,8 +186,9 @@ with summary_col:
                     # Display the summary using st.write_stream
                     with st.spinner(loading_summary_message):
                         summary = st.write_stream(summary_generator)
-                    st.success(summary_success_message)
-
+                    # st.success(summary_success_message)
+                    st.warning ('الرجاء الاستخدام بحذر')
+                    st.toast(summary_success_message,icon='✅')
                 except Exception as e:
                     st.warning(f"{load_error_message}: {e}")
             else:
